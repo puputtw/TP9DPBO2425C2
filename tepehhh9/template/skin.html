@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pembalap — Daftar</title>
+  <style>
+    :root{
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --danger: #ef4444;
+      --border: #e6e9ef;
+      --radius: 8px;
+      --pad: 14px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: light;
+    }
+
+    html,body{height:100%;margin:0;background:var(--bg);}
+    .container{max-width:980px;margin:36px auto;padding:18px;}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+    }
+
+    h1{margin:0 0 12px 0;font-size:18px}
+    p.lead{margin:0 0 16px;color:var(--muted);font-size:13px}
+
+    table{width:100%;border-collapse:collapse;font-size:14px;background:white}
+    table th, table td{padding:10px var(--pad);border-bottom:1px solid var(--border);text-align:left}
+    table th{color:var(--muted);font-weight:500;font-size:12px}
+    table td{color:#475569}
+
+    .btn{display:inline-flex;padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;cursor:pointer;text-decoration:none;transition:all 0.15s ease-in-out;align-items:center;justify-content:center;height:36px;box-sizing:border-box}
+    .btn:hover{filter:brightness(0.95)}
+    .btn-add{background:var(--card);color:var(--accent)}
+    .btn-primary{background:var(--accent);color:white;border-color:var(--accent)}
+    .btn-muted{background:var(--bg);color:var(--muted)}
+    .btn-delete{background:var(--danger);color:white;border-color:var(--danger);margin-left:8px}
+    .btn-edit{background:var(--accent);color:white;border-color:var(--accent)}
+
+    .col-id{width:50px;text-align:center}
+    .col-actions{width:150px;text-align:right}
+    
+    /* Tambahkan class aktif untuk tab */
+    .tab-active {
+        background: var(--accent); 
+        color: white; 
+        border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      
+      <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <a href="index.php" class="btn btn-muted _TAB_PEMBALAP_CLASS_">Daftar Pembalap</a>
+        <a href="index.php?screen=kendaraan_list" class="btn btn-muted">Daftar Kendaraan</a>
+      </div>
+      
+      <h1>Daftar Pembalap</h1>
+      <p class="lead"></p>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-id">No.</th>
+              <th>Nama</th>
+              _HEADER_DINAMIS_ 
+              <th class="col-actions">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            _DATA_BARIS_ 
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
+        <div style="color:var(--muted);font-size:13px">Total: _TOTAL_DATA_</div>
+        <div>
+          <a href="index.php?screen=add" class="btn btn-add" id="btn-add-data">+ Tambah Pembalap</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('click', function(e){
+      // Selector diubah untuk mendukung tombol delete khusus kendaraan (jika ada)
+      var d = e.target.closest && (e.target.closest('.btn-delete') || e.target.closest('.btn-delete-kendaraan'));
+      if(!d) return;
+      
+      var id = d.getAttribute('data-id');
+      if(!id) return;
+      var ok = confirm('Yakin ingin menghapus entri #' + id + '?');
+      if(!ok) return;
+      
+      // Create a hidden form and submit it
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'index.php';
+      
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      
+      // Tentukan aksi berdasarkan tombol yang diklik
+      // Jika tombol memiliki class 'btn-delete-kendaraan', gunakan action 'kendaraan_delete'
+      if (d.classList.contains('btn-delete-kendaraan')) {
+          actionInput.value = 'kendaraan_delete';
+      } else {
+          // Default action untuk pembalap
+          actionInput.value = 'delete'; 
+      }
+      
+      form.appendChild(actionInput);
+      
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'id';
+      idInput.value = id;
+      form.appendChild(idInput);
+      
+      document.body.appendChild(form);
+      form.submit();
+    });
+  </script>
+
+</body>
+</html>
